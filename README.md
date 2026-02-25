@@ -1,32 +1,30 @@
-# APDC-PEI 25/26 — First Web Application (JWT Cookie Auth)
+    # APDC-PEI 25/26 — First Web Application (Part 5)
 
-Building on Part 3, this version replaces rudimentary auth tokens with **proper JWT-based session cookies**. Authentication is validated on protected endpoints using signed JWTs, and a new `/rest/utils/compute` endpoint demonstrates integration with **Google Cloud Tasks**.
+Building on Part 4, this version replaces rudimentary auth tokens with **proper JWT-based session cookies**. Authentication is validated on protected endpoints using signed JWTs.
 
 ---
 
-## What changed from Part 3
+## What changed from Part 4
 
 - Login now issues a **signed JWT** stored in an `HttpOnly` session cookie (`session::apdc`)
 - A new **`JWTToken`** class handles JWT creation, validation, and decoding using the `auth0/java-jwt` library
 - A new **`JWTConfig`** class centralises algorithm configuration — supports **HMAC** (HS256/384/512), **RSA** (RS256/384/512), and **ECDSA** (ES256/384/512), just choose the one wanted
 - A new **`POST /rest/login/create`** endpoint allows registering users in memory
 - The **`/rest/utils/time`** endpoint is **protected** — requires a valid JWT with role `Admin`
-- A new **`GET /rest/utils/compute`** endpoint enqueues a background task via **Google Cloud Tasks**
-- A new `webapp/secret/` folder was added for protected static content
 - Users are stored in an **in-memory `HashMap`** (no database yet)
 
 ---
 
 ## What this app does
 
-| Method | Endpoint | Description | Protected |
-|---|---|---|---|
-| `POST` | `/rest/login/` | Authenticate and receive a JWT session cookie | No |
-| `POST` | `/rest/login/create` | Register a new user | No |
-| `GET` | `/rest/login/{username}` | Check if a username is available | No |
-| `GET` | `/rest/utils/time` | Get current server time | Yes (Admin only) |
-| `GET` | `/rest/utils/compute` | Enqueue a background compute task | No |
-| `GET` | `/rest/utils/hello` | Redirects to 500 error page | No |
+The app serves a simple web page with the following available services:
+
+- **`POST /rest/login/`** - authenticate and receive a JWT session cookie
+- **`GET /rest/login/{username}`** - checks whether a username is already taken
+- **`GET /rest/utils/hello`** - intentionally throws an exception and redirects to `/error/500.html`
+- **`GET /rest/utils/time`** - returns the current server time in JSON (Admin Only)
+- **`GET /rest/utils/compute`** - enqueues an async computation task via Cloud Tasks
+- **`POST /rest/login/create`** -  register a new user
 
 ---
 
@@ -92,8 +90,8 @@ Before you begin, make sure you have the following installed:
 Fork the project on GitHub, then clone your fork locally:
 
 ```bash
-git clone git@github.com:APDC-Projeto/apdc-pei-2526-cookie.git
-cd apdc-pei-2526-cookie
+git clone git@github.com:APDC-Projeto/apdc-pei-2526-part5.git
+cd apdc-pei-2526-part5
 ```
 
 ### 2. Import into Eclipse
@@ -107,67 +105,75 @@ cd apdc-pei-2526-cookie
 
 ## Building the project
 
+From the project root, run:
+
 ```bash
 mvn clean package
+```
+
+If the build succeeds, you'll find the compiled `.war` file at:
+
+```
+target/Firstwebapp-0.0.1.war
 ```
 
 ---
 
 ## Running locally
 
+Start the local App Engine dev server with:
+
 ```bash
 mvn appengine:run
 ```
 
-Then open your browser and go to `http://localhost:8080/`.
+Then open your browser and go to:
 
----
+```
+http://localhost:8080/
+```
 
 ## Testing with Postman
 
-Since cookies are involved, Postman is the recommended way to test this API as it automatically handles cookies between requests.
+- Open [Postman](https://www.postman.com/downloads/) and create new requests:
 
-### Step 1 — Create a user
-
-- Method: **POST**
-- URL: `http://localhost:8080/rest/login/create`
-- Body (raw JSON):
-```json
-{
-  "username": "admin",
-  "password": "password"
-}
-```
+1. Create a user:
+    - Method: **POST**
+    - URL: `http://localhost:8080/rest/login/create`
+    - Body (raw JSON):
+      ```json
+      {
+        "username": "admin",
+        "password": "password"
+      }
+      ```
 
 > Using `admin` as the username automatically assigns the `Admin` role, which is required to access `/rest/utils/time`.
 
-### Step 2 — Login
+2. Login
+    - Method: **POST**
+    - URL: `http://localhost:8080/rest/login/`
+    - Body (raw JSON):
+    ```json
+    {
+      "username": "admin",
+      "password": "password"
+    }
+    ```
 
-- Method: **POST**
-- URL: `http://localhost:8080/rest/login/`
-- Body (raw JSON):
-```json
-{
-  "username": "admin",
-  "password": "password"
-}
-```
+  > On success, the response body contains the JWT token and the `session::apdc` cookie is set automatically. Postman will store and send it on subsequent requests.
 
-On success, the response body contains the JWT token and the `session::apdc` cookie is set automatically. Postman will store and send it on subsequent requests.
+3. Access a protected endpoint
+    - Method: **GET**
+    - URL: `http://localhost:8080/rest/utils/time`
 
-### Step 3 — Access a protected endpoint
+  > With a valid `Admin` JWT cookie this returns the current server time. Without it, returns `403 Forbidden`.
 
-- Method: **GET**
-- URL: `http://localhost:8080/rest/utils/time`
+4. Check username availability
+    - Method: **GET**
+    - URL: `http://localhost:8080/rest/login/admin`
 
-With a valid `Admin` JWT cookie this returns the current server time. Without it, returns `403 Forbidden`.
-
-### Step 4 — Check username availability
-
-- Method: **GET**
-- URL: `http://localhost:8080/rest/login/admin`
-
-Returns `false` if the username is taken, `true` if it is available.
+  > Returns `false` if the username is taken, `true` if it is available.
 
 ---
 
@@ -218,25 +224,25 @@ src/
     │       ├── filters/
     │       │   └── AdditionalResponseHeadersFilter.java ← CORS filter
     │       ├── resources/
-    │       │   ├── ComputationResource.java             ← Utility endpoints (JWT-protected)
+    │       │   ├── ComputationResource.java             ← Utility endpoints + Cloud Tasks trigger
     │       │   └── LoginResource.java                   ← Login, register, session management
     │       └── util/
     │           ├── JWTConfig.java                       ← Algorithm & secret configuration
     │           ├── LoginData.java                       ← Login request model
     │           └── UserData.java                        ← User model
     └── webapp/
-        ├── index.html
+        ├── index.html                                   ← Front page
         ├── secret/
         │   └── index.html                               ← Protected static content
         ├── error/
-        │   ├── 404.html
-        │   └── 500.html
+        │   ├── 404.html                                 ← Custom 404 page
+        │   └── 500.html                                 ← Custom 500 page
         ├── img/
         │   ├── cat.png
         │   └── jedi.gif
         └── WEB-INF/
-            ├── web.xml
-            └── appengine-web.xml
+            ├── web.xml                                  ← Servlet config
+            └── appengine-web.xml                        ← App Engine config
 ```
 
 ---
