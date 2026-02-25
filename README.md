@@ -1,4 +1,4 @@
-    # APDC-PEI 25/26 — First Web Application (Part 5)
+# APDC-PEI 25/26 — First Web Application (Part 5)
 
 Building on Part 4, this version replaces rudimentary auth tokens with **proper JWT-based session cookies**. Authentication is validated on protected endpoints using signed JWTs.
 
