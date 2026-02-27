@@ -1,4 +1,4 @@
-package pt.unl.fct.di.apdc.firstwebapp.resources;
+package pt.unl.fct.di.adc.firstwebapp.resources;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +16,10 @@ import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-import pt.unl.fct.di.apdc.firstwebapp.util.JWTConfig;
-import pt.unl.fct.di.apdc.firstwebapp.authentication.JWTToken;
-import pt.unl.fct.di.apdc.firstwebapp.util.UserData;
-import pt.unl.fct.di.apdc.firstwebapp.util.LoginData;
+import pt.unl.fct.di.adc.firstwebapp.util.JWTConfig;
+import pt.unl.fct.di.adc.firstwebapp.authentication.JWTToken;
+import pt.unl.fct.di.adc.firstwebapp.util.UserData;
+import pt.unl.fct.di.adc.firstwebapp.util.LoginData;
 
 import com.google.gson.Gson;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -68,7 +68,7 @@ public class LoginResource {
         }
 
         // Create and return a secure HTTP-only cookie with the JWT token
-        NewCookie cookie = new NewCookie.Builder("session::apdc")
+        NewCookie cookie = new NewCookie.Builder("session::adc")
                 .value(token) // JWT token
                 .path("/")
                 .comment("JWT session token") 

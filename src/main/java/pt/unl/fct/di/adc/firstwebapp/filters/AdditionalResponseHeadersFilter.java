@@ -1,4 +1,4 @@
-package pt.unl.fct.di.apdc.firstwebapp.filters;
+package pt.unl.fct.di.adc.firstwebapp.filters;
 
 import java.io.IOException;
 

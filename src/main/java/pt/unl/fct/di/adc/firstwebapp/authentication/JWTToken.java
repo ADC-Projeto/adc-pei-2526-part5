@@ -1,6 +1,6 @@
-package pt.unl.fct.di.apdc.firstwebapp.authentication;
+package pt.unl.fct.di.adc.firstwebapp.authentication;
 
-import pt.unl.fct.di.apdc.firstwebapp.util.JWTConfig;
+import pt.unl.fct.di.adc.firstwebapp.util.JWTConfig;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;

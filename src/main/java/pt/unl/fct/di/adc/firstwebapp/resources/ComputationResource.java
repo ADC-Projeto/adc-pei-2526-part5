@@ -1,4 +1,4 @@
-package pt.unl.fct.di.apdc.firstwebapp.resources;
+package pt.unl.fct.di.adc.firstwebapp.resources;
 
 import java.io.IOException;
 import java.net.URI;

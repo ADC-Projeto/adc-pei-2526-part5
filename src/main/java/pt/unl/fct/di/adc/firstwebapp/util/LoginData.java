@@ -1,4 +1,4 @@
-package pt.unl.fct.di.apdc.firstwebapp.util;
+package pt.unl.fct.di.adc.firstwebapp.util;
 
 public class LoginData {
 	
