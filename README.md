@@ -1,4 +1,4 @@
-# APDC-PEI 25/26 — First Web Application (Part 5)
+# ADC-PEI 25/26 — First Web Application (Part 5)
 
 Building on Part 4, this version replaces rudimentary auth tokens with **proper JWT-based session cookies**. Authentication is validated on protected endpoints using signed JWTs.
 
@@ -75,7 +75,8 @@ To switch to RSA or ECDSA, change the `ALGORITHM` field — key pairs are genera
 
 Before you begin, make sure you have the following installed:
 
-- [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+- [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) / [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+- [Python 3.10](https://www.python.org/downloads/release/python-3100/) (for the Google Cloud SDK download)
 - [Apache Maven](https://maven.apache.org/install.html)
 - [Git](https://git-scm.com/)
 - [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) (for cloud deployment)
@@ -90,8 +91,8 @@ Before you begin, make sure you have the following installed:
 Fork the project on GitHub, then clone your fork locally:
 
 ```bash
-git clone git@github.com:APDC-Projeto/apdc-pei-2526-part5.git
-cd apdc-pei-2526-part5
+git clone git@github.com:APDC-Projeto/adc-pei-2526-part5.git
+cd adc-pei-2526-part5
 ```
 
 ### 2. Import into Eclipse
@@ -161,7 +162,7 @@ http://localhost:8080/
     }
     ```
 
-  > On success, the response body contains the JWT token and the `session::apdc` cookie is set automatically. Postman will store and send it on subsequent requests.
+  > On success, the response body contains the JWT token and the `session::adc` cookie is set automatically. Postman will store and send it on subsequent requests.
 
 3. Access a protected endpoint
     - Method: **GET**
@@ -218,7 +219,7 @@ https://<your-project-id>.appspot.com/
 src/
 └── main/
     ├── java/
-    │   └── pt/unl/fct/di/apdc/firstwebapp/
+    │   └── pt/unl/fct/di/adc/firstwebapp/
     │       ├── authentication/
     │       │   └── JWTToken.java                        ← JWT create, validate, decode
     │       ├── filters/
