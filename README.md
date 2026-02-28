@@ -6,7 +6,7 @@ Building on Part 4, this version replaces rudimentary auth tokens with **proper 
 
 ## What changed from Part 4
 
-- Login now issues a **signed JWT** stored in an `HttpOnly` session cookie (`session::apdc`)
+- Login now issues a **signed JWT** stored in an `HttpOnly` session cookie (`session::adc`)
 - A new **`JWTToken`** class handles JWT creation, validation, and decoding using the `auth0/java-jwt` library
 - A new **`JWTConfig`** class centralises algorithm configuration — supports **HMAC** (HS256/384/512), **RSA** (RS256/384/512), and **ECDSA** (ES256/384/512), just choose the one wanted
 - A new **`POST /rest/login/create`** endpoint allows registering users in memory
@@ -30,7 +30,7 @@ The app serves a simple web page with the following available services:
 
 ## Authentication & JWT Cookie
 
-On a successful login, the server creates a **JWT** signed with the configured algorithm and sets it as an `HttpOnly` cookie named `session::apdc`. The JWT contains:
+On a successful login, the server creates a **JWT** signed with the configured algorithm and sets it as an `HttpOnly` cookie named `session::adc`. The JWT contains:
 
 | Claim | Description |
 |---|---|
@@ -75,6 +75,8 @@ To switch to RSA or ECDSA, change the `ALGORITHM` field — key pairs are genera
 
 Before you begin, make sure you have the following installed:
 
+- **Google Cloud Account**
+  > ⚠️ See the instructions to redeem your cupon in shared materials: **`ADC_Project_Google_Cloud_Account_Creation.pdf`**
 - [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
 - [Python 3.10](https://www.python.org/downloads/release/python-3100/) (for the Google Cloud SDK download)
 - [Apache Maven](https://maven.apache.org/install.html)
