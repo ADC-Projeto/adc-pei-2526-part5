@@ -49,7 +49,7 @@ public class ComputationResource {
 	
 	@GET
 	@Path("/time")
-	public Response getCurrentTime(@CookieParam("session::apdc") Cookie cookie) {
+	public Response getCurrentTime(@CookieParam("session::adc") Cookie cookie) {
 		if(!LoginResource.checkPermissions(cookie, LoginResource.ADMIN)) {
 			return Response.status(Status.FORBIDDEN).entity("Invalid permission to access 'Time' resource.").build();
 		}
