@@ -32,8 +32,8 @@ public class LoginResource {
 	
 	//Settings that must be in the database
 	public static final String ADMIN = "Admin";
-	public static final String BACKOFFICE = "Backoffice";
-	public static final String REGULAR = "Regular";
+	public static final String BOFFICER = "Bofficer";
+	public static final String USER = "User";
 		
 	public static Map<String, UserData> users = new HashMap<String, UserData>();
 	
@@ -52,7 +52,7 @@ public class LoginResource {
 			return Response.status(Status.FORBIDDEN).entity("Incorrect username or password.").build();
 		}
 		
-		String role = REGULAR;
+		String role = USER;
 		if (data.username.equalsIgnoreCase("admin")) { // TODO: (for educational purposes) change it to have proper logic on your project
 			role = ADMIN;
 		}
@@ -104,9 +104,9 @@ public class LoginResource {
     
     private static int convertRole(String role) {
         return switch (role) {
-            case BACKOFFICE -> 1;
+            case BOFFICER -> 1;
             case ADMIN -> 2;
-            case REGULAR -> 0;
+            case USER -> 0;
             default -> -1;
         };
     }
