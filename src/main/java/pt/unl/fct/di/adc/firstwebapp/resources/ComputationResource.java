@@ -58,23 +58,39 @@ public class ComputationResource {
 	
 
 	@GET
-	@Path("/compute")
-	public Response triggerExecuteComputeTask() throws IOException {
-		String projectId = "TODO_YOUR_PROJECT_ID"; // TODO: Alterar com o Id do vosso projecto 
-		String queueName = "Default";
-		String location = "europe-west6";
-		LOG.log(Level.INFO, projectId + " :: " + queueName + " :: " + location );
+    @Path("/compute")
+    public Response compute() {
+        LOG.fine("Starting to execute computation task");
+        try {
+            Thread.sleep(60 * 1000 * 10); // 10 min
+        } catch (Exception e) {
+            LOG.logp(Level.SEVERE, this.getClass().getCanonicalName(), "executeComputeTask", "An exception has occurred", e);
+            return Response.serverError().build();
+        }
+        
+        return Response.ok().build();
+    }
 
-		try (CloudTasksClient client = CloudTasksClient.create()) {
-			String queuePath = QueueName.of(projectId, location, queueName).toString();
-			Task.Builder taskBuilder = Task.newBuilder().setAppEngineHttpRequest(AppEngineHttpRequest.newBuilder()
-							.setRelativeUri("/rest/utils/compute").setHttpMethod(HttpMethod.POST).build());
+	@GET
+    @Path("/backgroundCompute")
+    public Response triggerBackgroundComputeTask() throws IOException {
+		// TODO: put here your project id (real-world deployments define critical configs via env variables or secret vaults..)
+        String projectId = "vital-reef-488417-k2";
+		// TODO: create a task queue through the Google Cloud Web Console (Cloud Tasks)
+        String queueName = "Default";
+        String location = "europe-west6";
+        LOG.log(Level.INFO, projectId + " :: " + queueName + " :: " + location );
+        try (CloudTasksClient client = CloudTasksClient.create()) {
+            String queuePath = QueueName.of(projectId, location, queueName).toString();
+            Task.Builder taskBuilder =
+                    Task.newBuilder().setAppEngineHttpRequest(AppEngineHttpRequest.newBuilder()
+                            .setRelativeUri("/rest/utils/compute").setHttpMethod(HttpMethod.GET)
+                            .build());
+            taskBuilder.setScheduleTime(Timestamp.newBuilder().setSeconds(Instant.now(Clock.systemUTC()).getEpochSecond()));
+            client.createTask(queuePath, taskBuilder.build());
+        }
 
-			taskBuilder.setScheduleTime(Timestamp.newBuilder().setSeconds(Instant.now(Clock.systemUTC()).getEpochSecond()));
-			
-			client.createTask(queuePath, taskBuilder.build());
-		} 
-		return Response.ok().build();
-	}
+        return Response.ok().build();
+    }
 
 }
