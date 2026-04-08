@@ -11,7 +11,7 @@ Building on Part 4, this version replaces rudimentary auth tokens with **proper 
 - A new **`JWTConfig`** class centralises algorithm configuration — supports **HMAC** (HS256/384/512), **RSA** (RS256/384/512), and **ECDSA** (ES256/384/512), just choose the one wanted
 - A new **`POST /rest/login/create`** endpoint allows registering users in memory
 - The **`/rest/utils/time`** endpoint is **protected** — requires a valid JWT with role `Admin`
-- Users are stored in an **in-memory `HashMap`** (no database yet)
+- Users are stored in an **in-memory `HashMap`** (no database yet, can be replaced by Google Datastore)
 
 ---
 
@@ -23,7 +23,7 @@ The app serves a simple web page with the following available services:
 - **`GET /rest/login/{username}`** - checks whether a username is already taken
 - **`GET /rest/utils/hello`** - intentionally throws an exception and redirects to `/error/500.html`
 - **`GET /rest/utils/time`** - returns the current server time in JSON (Admin Only)
-- **`GET /rest/utils/compute`** - enqueues an async computation task via Cloud Tasks
+- **`GET /rest/utils/backgroundCompute`** - enqueues an async computation task via Cloud Tasks
 - **`POST /rest/login/create`** -  register a new user
 
 ---
@@ -37,7 +37,7 @@ On a successful login, the server creates a **JWT** signed with the configured a
 | `sub` | Username |
 | `iat` | Issued at (timestamp) |
 | `exp` | Expiration time (2 hours) |
-| `role` | User role (`Regular`, `Backoffice`, or `Admin`) |
+| `role` | User role (`USER`, `BOFFICER`, or `ADMIN`) |
 | `email` | User email |
 | `...` | Feel free to add more |
 
@@ -47,11 +47,11 @@ On protected endpoints, the server extracts and verifies the JWT from the cookie
 
 | Role | Level |
 |---|---|
-| `Regular` | 0 |
-| `Backoffice` | 1 |
-| `Admin` | 2 |
+| `USER` | 0 |
+| `BOFFICER` | 1 |
+| `ADMIN` | 2 |
 
-> ⚠️ By default, users created via `/rest/login/create` get the `Regular` role. The username `admin` (case-insensitive) is automatically assigned the `Admin` role.
+> ⚠️ By default, users created via `/rest/login/create` get the `USER` role. The username `admin` (case-insensitive) is automatically assigned the `ADMIN` role.
 
 ---
 
